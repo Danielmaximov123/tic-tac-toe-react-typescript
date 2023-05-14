@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import Board from './Board';
 import calculateWinner from './calculateWinner';
-import { Button , Box } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
+import { Button, Box } from '@mui/material';
+import CachedIcon from '@mui/icons-material/Cached';
 
 interface HistoryItem {
   squares: (string | null)[];
@@ -27,7 +26,14 @@ const Game: React.FC = () => {
     setStepNumber(newHistory.length);
   };
 
-  const status = winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`;
+  let status: JSX.Element | string;
+  if (winner) {
+    status = <p style={{ fontSize: '1.5rem' , color : '#6000ff' }}>Winner: {winner}</p>;
+  } else if (stepNumber === 9) {
+    status = <p style={{ fontSize: '1.5rem' , color : 'red' }}>Nobody wins.<br/> Restart the game.</p> ;
+  } else {
+    status = <p style={{ fontSize: '1.5rem' }}>Next Player: {xIsNext  ? <span>X</span> : <span>O</span>}</p>
+  }
 
   return (
     <Box className="game">
@@ -35,8 +41,14 @@ const Game: React.FC = () => {
         <Board squares={current.squares} onClick={handleClick} />
       </Box>
       <Box className="game-info">
-        <Box>{status}</Box>
-        <Button onClick={() => setStepNumber(0)}>Restart the game</Button>
+        <Box>
+          {status}
+        </Box>
+        <Button color={winner ? "success" : "warning"} onClick={() => setStepNumber(0)} variant="outlined" endIcon={<CachedIcon />}>
+          {
+            winner ? "Start Again" : "Restart the game"
+          }
+        </Button>
       </Box>
     </Box>
   );
